@@ -42,13 +42,14 @@ SubState * read_day2(char *path, int N){
     return data;
 }
 
-char ** read_day3(char *path, int N, int bits){
+int * read_day3(char *path, int N, int bits){
     FILE *fp = fopen(path, "r");
 
-    char **data = malloc(sizeof(char*) * N);
+    int *data = malloc(sizeof(int) * N);
+    char temp[bits + 1];
     for(int i = 0; i < N; i++){
-        data[i] = malloc(sizeof(char) * bits);
-        fscanf(fp, "%s", data[i]);
+        fscanf(fp, "%s", temp);
+        data[i] = strtol(temp, NULL, 2);
     }
     fclose(fp);
     return data;

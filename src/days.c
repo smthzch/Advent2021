@@ -5,6 +5,14 @@
 #include "readin.h"
 #include "structs.c"
 
+void printd(int d){
+    printf("---Day %d---\n", d);
+}
+
+void newl() {
+    printf("\n");
+}
+
 // day 1-----------------------------------------------
 int windowed_increase(int * data, int window, int N){
     int increases = 0;
@@ -20,7 +28,7 @@ int windowed_increase(int * data, int window, int N){
 }
 
 void day1(){
-    printf("---Day 1---\n");
+    printd(1);
     char *path = "data/day1.txt";
     int N = 2000;
     int *data = read_day1(path, N);
@@ -32,6 +40,7 @@ void day1(){
     printf("Window 3 increases: %d\n", increases);
     
     free(data); 
+    newl();
 }
 
 // day 2-----------------------------------------------
@@ -41,10 +50,11 @@ void update_substate(SubState *sub, SubState *dsub, int N){
         sub->aim += dsub[i].aim;
         sub->depth += dsub[i].distance * sub->aim;
     }
+    newl();
 }
 
 void day2(){
-    printf("---Day 2---\n");
+    printd(2);
     char *path = "data/day2.txt";
     int N = 1000;
 
@@ -57,23 +67,29 @@ void day2(){
     printf("Distance:   %d\nDepth:   %d\nMult: %d\n", sub.distance, sub.depth, mult);
     
     free(dsub);
+    newl();
 }
 
 // day 3-----------------------------------------------
-Diagnostics * get_diagnostics(char **data, int N, int bits, int bit_mask){
+int get_bit(int num, int bit, int MAXBITS){
+    bit = MAXBITS - bit - 1; // swap endians, 0 is most significant
+    return (num & (1 << bit)) >> bit;
+}
+
+Diagnostics * get_diagnostics(int *data, int N, int bits, int bit_mask){
     // tally how many 1's in each bit position
     int counts[bits];
     for(int j = 0; j < bits; j++) counts[j] = 0;
     for(int i = 0; i < N; i++){
         for(int j = 0; j < bits; j++){
-            counts[j] += data[i][j] == '1' ? 1 : 0;
+            counts[j] += get_bit(data[i], j, bits);
         }
     }
     // build int from most common bits
     int gamma = 0;
     for(int j = 0; j < bits; j++){
         assert(counts[j] != (N / 2)); // what if equal number?
-        gamma |= counts[j] > (N / 2) ? (1<<(bits - j - 1)) : 0;
+        gamma |= counts[j] > (N / 2) ? (1 << (bits - j - 1)) : 0;
     }
     int epsilon = (~gamma) & bit_mask; // only flip needed bits, drop sign
     int power = gamma * epsilon;
@@ -86,27 +102,30 @@ Diagnostics * get_diagnostics(char **data, int N, int bits, int bit_mask){
         mco2[i] = 1;
     } 
     int o2_counts[bits];
-    for(int j = 0; j < bits; j++) o2_counts[j] = 0;
     int co2_counts[bits];
-    for(int j = 0; j < bits; j++) co2_counts[j] = 0;
-    for(int j = 0; j < N; j++){
+    for(int j = 0; j < bits; j++){
+        o2_counts[j] = 0;
+        co2_counts[j] = 0;
+    } 
+
+    for(int j = 0; j < bits; j++){
         // first get counts
         for(int i = 0; i < N; i++){
-            if(mo2[i] == 1 && no2 > 1) o2_counts[j] += data[i][j] == '1' ? 1 : 0;
-            if(mco2[i] == 1 && nco2 > 1) co2_counts[j] += data[i][j] == '1' ? 1 : 0;
+            if(mo2[i] == 1 && no2 > 1) o2_counts[j] += get_bit(data[i], j, bits);
+            if(mco2[i] == 1 && nco2 > 1) co2_counts[j] += get_bit(data[i], j, bits);
         }
         // then filter based on counts
-        char keep_o2 = o2_counts[j] >= round((float)no2 / 2.0) ? '1' : '0';
-        char keep_co2 = co2_counts[j] >= round((float)nco2 / 2.0) ? '0' : '1';
+        int keep_o2 = o2_counts[j] >= round((float)no2 / 2.0) ? 1 : 0;
+        int keep_co2 = co2_counts[j] >= round((float)nco2 / 2.0) ? 0 : 1;
         for(int i = 0; i < N; i++){
             if(mo2[i] == 1 && no2 > 1){
-                if(data[i][j] != keep_o2){
+                if(get_bit(data[i], j, bits) != keep_o2){
                     mo2[i] = 0;
                     no2--;
                 }
             }
             if(mco2[i] == 1 && nco2 > 1){
-                if(data[i][j] != keep_co2){
+                if(get_bit(data[i], j, bits) != keep_co2){
                     mco2[i] = 0;
                     nco2--;
                 }
@@ -118,16 +137,8 @@ Diagnostics * get_diagnostics(char **data, int N, int bits, int bit_mask){
     // pluck out o2 and co2 readings
     int o2 = 0, co2 = 0;
     for(int i = 0; i < N; i++){
-        if(mo2[i] == 1){
-            for(int j = 0; j < bits; j++){
-                o2 |= data[i][j] == '1' ? (1<<(bits - j - 1)) : 0;
-            }
-        }
-        if(mco2[i] == 1){
-            for(int j = 0; j < bits; j++){
-                co2 |= data[i][j] == '1' ? (1<<(bits - j - 1)) : 0;
-            }
-        }
+        if(mo2[i] == 1) o2 = data[i];
+        if(mco2[i] == 1) co2 = data[i];
     }
     int life_support = o2 * co2;
 
@@ -148,7 +159,7 @@ void day3(){
     int N = 1000;
     int bits = 12;
     int bit_mask = 0xFFF;
-    char **data = read_day3(path, N, bits);
+    int *data = read_day3(path, N, bits);
     
     Diagnostics *readings = get_diagnostics(data, N, bits, bit_mask);
 
@@ -159,11 +170,17 @@ void day3(){
     printf("CO2: %d\n", readings->co2);
     printf("Life support: %d\n", readings->life_support);
 
-    for(int i = 0; i < N; i++){
-        free(data[i]);
-    }
     free(data);
     free(readings);
+    newl();
+}
+
+// day 4-----------------------------------------------
+void day4(){
+    printd(4);
+
+
+    newl();
 }
 
 //-----------------------------------------------
@@ -175,12 +192,10 @@ int main(){
     printf("#\n");
     printf("#\n");
     printf("######################################\n");
-    printf("\n");
+    newl();
     day1();
-    printf("\n");
     day2();
-    printf("\n");
     day3();
-    printf("\n");
+    day4();
     return 0;
 }
