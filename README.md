@@ -2,5 +2,7 @@
 
 In key of C.
 
+```shell
 > make
 > make run
+```
