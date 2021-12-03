@@ -1,7 +1,5 @@
-CFLAGS=-Wall -g
-
 all:
-	gcc $(CFLAGS) -o bin/advent src/days.c src/main.c
+	gcc -Wall -g -o bin/advent src/structs.c src/readin.c src/days.c -lm
   
 clean:
 	rm bin/advent
