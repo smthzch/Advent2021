@@ -4,6 +4,7 @@
 
 #include "sub.h"
 #include "bingo.h"
+#include "map.h"
 
 int * read_day1(char *path, int N){
     FILE *fp = fopen(path, "r");
@@ -100,4 +101,36 @@ Bingo * read_day4_boards(char *path){
     }
     fclose(fp);
     return games;
+}
+
+int read_day5(char *path){
+    FILE *fp = fopen(path, "r");
+    int coords[4];
+    Map * map = malloc(sizeof(Map));
+    init_map(map);
+    int overlaps = 0;
+    while(fscanf(fp, "%d,%d -> %d,%d", &coords[0], &coords[1], &coords[2], &coords[3]) > 0){
+
+        int x1, x2, y1, y2;
+        x1 = coords[0] <= coords[2] ? coords[0] : coords[2];
+        x2 = coords[0] <= coords[2] ? coords[2] : coords[0];
+        y1 = coords[1] <= coords[3] ? coords[1] : coords[3];
+        y2 = coords[1] <= coords[3] ? coords[3] : coords[1];
+        if(x1 == x2){
+            for(int i = y1; i <= y2; i++){
+                map->gas[i][x1]++;
+                overlaps += map->gas[i][x1] == 2 ? 1 : 0;
+            }
+        }
+        if(y1 == y2){
+            for(int j = x1; j <= x2; j++){
+                map->gas[y1][j]++;
+                overlaps += map->gas[y1][j] == 2 ? 1 : 0;
+            }
+        }
+
+    }
+    fclose(fp);
+    return overlaps;
+    
 }

@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <math.h>
+
 #include "readin.h"
 #include "sub.h"
 #include "bingo.h"
+#include "map.h"
 
 void printd(int d){
     printf("---Day %d---\n", d);
@@ -141,8 +143,20 @@ void day4(){
 // day 5-----------------------------------------------
 void day5(){
     printd(5);
-
+    char *path = "data/day5.txt";
+    int overlaps = read_day5(path);
+    /*
+    for(int i = 0; i < 10; i++){
+        for(int j = 0; j < 10; j++){
+            printf("%d ", map->gas[i][j]);
+        }
+        newl();
+    }
+    */
+    printf("overlaps %d", overlaps);
     newl();
+
+    //free(map);
 }
 
 //-----------------------------------------------
