@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <math.h>
 #include "readin.h"
+#include "sub.h"
+#include "bingo.h"
 #include "structs.c"
 
 void printd(int d){
@@ -71,88 +73,6 @@ void day2(){
 }
 
 // day 3-----------------------------------------------
-int get_bit(int num, int bit, int MAXBITS){
-    bit = MAXBITS - bit - 1; // swap endians, 0 is most significant
-    return (num & (1 << bit)) >> bit;
-}
-
-Diagnostics * get_diagnostics(int *data, int N, int bits, int bit_mask){
-    // tally how many 1's in each bit position
-    int counts[bits];
-    for(int j = 0; j < bits; j++) counts[j] = 0;
-    for(int i = 0; i < N; i++){
-        for(int j = 0; j < bits; j++){
-            counts[j] += get_bit(data[i], j, bits);
-        }
-    }
-    // build int from most common bits
-    int gamma = 0;
-    for(int j = 0; j < bits; j++){
-        assert(counts[j] != (N / 2)); // what if equal number?
-        gamma |= counts[j] > (N / 2) ? (1 << (bits - j - 1)) : 0;
-    }
-    int epsilon = (~gamma) & bit_mask; // only flip needed bits, drop sign
-    int power = gamma * epsilon;
-
-    // filter o2 and co2 readings from most/least common bits
-    int no2 = N, nco2 = N; // how many valid numbers are there
-    int mo2[N], mco2[N]; // mask of valid readings
-    for(int i = 0; i < N; i++){
-        mo2[i] = 1;
-        mco2[i] = 1;
-    } 
-    int o2_counts[bits];
-    int co2_counts[bits];
-    for(int j = 0; j < bits; j++){
-        o2_counts[j] = 0;
-        co2_counts[j] = 0;
-    } 
-
-    for(int j = 0; j < bits; j++){
-        // first get counts
-        for(int i = 0; i < N; i++){
-            if(mo2[i] == 1 && no2 > 1) o2_counts[j] += get_bit(data[i], j, bits);
-            if(mco2[i] == 1 && nco2 > 1) co2_counts[j] += get_bit(data[i], j, bits);
-        }
-        // then filter based on counts
-        int keep_o2 = o2_counts[j] >= round((float)no2 / 2.0) ? 1 : 0;
-        int keep_co2 = co2_counts[j] >= round((float)nco2 / 2.0) ? 0 : 1;
-        for(int i = 0; i < N; i++){
-            if(mo2[i] == 1 && no2 > 1){
-                if(get_bit(data[i], j, bits) != keep_o2){
-                    mo2[i] = 0;
-                    no2--;
-                }
-            }
-            if(mco2[i] == 1 && nco2 > 1){
-                if(get_bit(data[i], j, bits) != keep_co2){
-                    mco2[i] = 0;
-                    nco2--;
-                }
-            }
-        }
-        if(no2 == 1 && nco2 == 1) break;
-    }
-    assert(no2 == 1 && nco2 == 1);
-    // pluck out o2 and co2 readings
-    int o2 = 0, co2 = 0;
-    for(int i = 0; i < N; i++){
-        if(mo2[i] == 1) o2 = data[i];
-        if(mco2[i] == 1) co2 = data[i];
-    }
-    int life_support = o2 * co2;
-
-    Diagnostics *readings = malloc(sizeof(Diagnostics));
-    readings->gamma = gamma;
-    readings->epsilon = epsilon;
-    readings->power = power;
-    readings->o2 = o2;
-    readings->co2 = co2;
-    readings->life_support = life_support;
-
-    return readings;
-}
-
 void day3(){
     printf("---Day 3---\n");
     char *path = "data/day3.txt";
@@ -166,6 +86,7 @@ void day3(){
     printf("Gamma: %d\n", readings->gamma);
     printf("Epsilon: %d\n", readings->epsilon);
     printf("Power: %d\n", readings->power);
+    newl();
     printf("O2: %d\n", readings->o2);
     printf("CO2: %d\n", readings->co2);
     printf("Life support: %d\n", readings->life_support);
@@ -178,8 +99,40 @@ void day3(){
 // day 4-----------------------------------------------
 void day4(){
     printd(4);
-
-
+    char *path = "data/day4.txt";
+    int N = 100;
+    Vector *nums = read_day4_nums(path);
+    Bingo *games = read_day4_boards(path);
+    int won = 0;
+    int win_total, lost_total;
+    int win_last_played, lost_last_played;
+    for(int k = 0; k < nums->size; k++){
+        for(int n = 0; n < N; n++){
+            if(games[n].win == 0){
+                mark_num(&games[n], nums->vals[k]);
+                if(games[n].win){
+                    won++;
+                    if(won == 1){
+                        win_total = unmarked_totals(&games[n]);
+                        win_last_played = nums->vals[k];
+                    }
+                    if(won == N){
+                        lost_total = unmarked_totals(&games[n]);
+                        lost_last_played = nums->vals[k];
+                    }
+                }
+            }
+        }
+    }
+    printf("To win:\n");
+    printf("win unmarked total %d\n", win_total);
+    printf("last played: %d\n", win_last_played);
+    printf("final score: %d\n", win_last_played * win_total);
+    newl();
+    printf("To lose:\n");
+    printf("unmarked total %d\n", lost_total);
+    printf("last played: %d\n", lost_last_played);
+    printf("final score: %d\n", lost_last_played * lost_total);
     newl();
 }
 

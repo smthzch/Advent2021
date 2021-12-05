@@ -1,19 +1,10 @@
 #ifndef STRUCTS
 #define STRUCTS
 
-typedef struct subState {
-    int distance;
-    int depth;
-    int aim;
-} SubState;
+typedef struct vector {
+    int *vals;
+    int size;
+} Vector;
 
-typedef struct diagnostics {
-    int gamma;
-    int epsilon;
-    int power;
-    int o2;
-    int co2;
-    int life_support;
-} Diagnostics;
 
 #endif
