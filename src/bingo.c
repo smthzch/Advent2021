@@ -1,6 +1,6 @@
 #include "bingo.h"
 
-void init_board(Bingo *game){
+void init_board(Bingo *game, int population){
     for(int i = 0; i < BOARDDIM; i++){
         for(int j = 0; j < BOARDDIM; j++){
             game->board[i][j] = 0;
@@ -8,8 +8,9 @@ void init_board(Bingo *game){
         }
         game->totals[0][i] = 0;
         game->totals[1][i] = 0;
-        game->win = 0;
     }
+    game->win = 0;
+    game->population = population;
 }
 
 void fill_board_row(Bingo *game, int row_ix, int *nums){

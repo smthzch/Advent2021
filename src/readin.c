@@ -4,7 +4,6 @@
 
 #include "sub.h"
 #include "bingo.h"
-#include "structs.c"
 
 int * read_day1(char *path, int N){
     FILE *fp = fopen(path, "r");
@@ -60,19 +59,19 @@ int * read_day3(char *path, int N, int bits){
 }
 
 
-Vector * read_day4_nums(char *path){
+int * read_day4_nums(char *path){
     FILE *fp = fopen(path, "r");
     char numstr[300];
     fscanf(fp, "%s", numstr);
     fclose(fp);
     char * token = strtok(numstr, ",");
-    Vector * nums = malloc(sizeof(Vector));
-    nums->vals = malloc(sizeof(int));
-    nums->size = 1;
+    int * nums = malloc(sizeof(int));
+    nums[0] = 1; //store total size of array in 0 ix
     while(token){
-        nums->vals = realloc(nums->vals, nums->size * sizeof(int));
-        nums->vals[nums->size - 1] = strtol(token, NULL, 10);
-        nums->size++;
+        nums[0]++;
+        nums = realloc(nums, nums[0] * sizeof(int)); // not safe
+        nums[nums[0] - 1] = strtol(token, NULL, 10);
+        
         token = strtok(NULL, ",");
     }
     return nums;
@@ -82,7 +81,7 @@ Vector * read_day4_nums(char *path){
 Bingo * read_day4_boards(char *path){
     FILE *fp = fopen(path, "r");
     char numstr[300];
-    fscanf(fp, "%s", numstr); //skip first line
+    fscanf(fp, "%s", numstr); // skip first line
     // get number of boards
     int n_lines = 0;
     while(fscanf(fp, "%s", numstr) > 0) n_lines++;
@@ -93,7 +92,7 @@ Bingo * read_day4_boards(char *path){
     int nums[BOARDDIM];
     Bingo *games = malloc(sizeof(Bingo) * N);
     for(int n = 0; n < N; n++){
-        init_board(&games[n]);
+        init_board(&games[n], N);
         for(int i = 0; i < BOARDDIM; i++){
             for(int j = 0; j < BOARDDIM; j++) fscanf(fp, "%d", &nums[j]);
             fill_board_row(&games[n], i, nums);

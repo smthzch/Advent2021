@@ -5,7 +5,6 @@
 #include "readin.h"
 #include "sub.h"
 #include "bingo.h"
-#include "structs.c"
 
 void printd(int d){
     printf("---Day %d---\n", d);
@@ -90,35 +89,35 @@ void day3(){
     printf("O2: %d\n", readings->o2);
     printf("CO2: %d\n", readings->co2);
     printf("Life support: %d\n", readings->life_support);
-
+    newl();
+    
     free(data);
     free(readings);
-    newl();
 }
 
 // day 4-----------------------------------------------
 void day4(){
     printd(4);
     char *path = "data/day4.txt";
-    int N = 100;
-    Vector *nums = read_day4_nums(path);
+    int *nums = read_day4_nums(path);
     Bingo *games = read_day4_boards(path);
+
     int won = 0;
     int win_total, lost_total;
     int win_last_played, lost_last_played;
-    for(int k = 0; k < nums->size; k++){
-        for(int n = 0; n < N; n++){
+    for(int k = 1; k < nums[0]; k++){
+        for(int n = 0; n < games[0].population; n++){
             if(games[n].win == 0){
-                mark_num(&games[n], nums->vals[k]);
+                mark_num(&games[n], nums[k]);
                 if(games[n].win){
                     won++;
                     if(won == 1){
                         win_total = unmarked_totals(&games[n]);
-                        win_last_played = nums->vals[k];
+                        win_last_played = nums[k];
                     }
-                    if(won == N){
+                    if(won == games[0].population){
                         lost_total = unmarked_totals(&games[n]);
-                        lost_last_played = nums->vals[k];
+                        lost_last_played = nums[k];
                     }
                 }
             }
@@ -133,6 +132,16 @@ void day4(){
     printf("unmarked total %d\n", lost_total);
     printf("last played: %d\n", lost_last_played);
     printf("final score: %d\n", lost_last_played * lost_total);
+    newl();
+
+    free(nums);
+    free(games);
+}
+
+// day 5-----------------------------------------------
+void day5(){
+    printd(5);
+
     newl();
 }
 
@@ -150,5 +159,6 @@ int main(){
     day2();
     day3();
     day4();
+    day5();
     return 0;
 }
