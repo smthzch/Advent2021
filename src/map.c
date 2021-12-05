@@ -19,7 +19,7 @@ void print_map(Map *map){
 }
 
 int count_overlaps(Map *map){
-    int overlaps;
+    int overlaps = 0;
     for(int i = 0; i < MAPSIZE; i++){
         for(int j = 0; j < MAPSIZE; j++){
             if(map->gas[i][j] >= 2) overlaps++;
