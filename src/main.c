@@ -144,19 +144,12 @@ void day4(){
 void day5(){
     printd(5);
     char *path = "data/day5.txt";
-    int overlaps = read_day5(path);
-    /*
-    for(int i = 0; i < 10; i++){
-        for(int j = 0; j < 10; j++){
-            printf("%d ", map->gas[i][j]);
-        }
-        newl();
-    }
-    */
+    Map *map = read_day5(path);
+    int overlaps = count_overlaps(map);
     printf("overlaps %d", overlaps);
     newl();
 
-    //free(map);
+    free(map);
 }
 
 //-----------------------------------------------

@@ -103,34 +103,21 @@ Bingo * read_day4_boards(char *path){
     return games;
 }
 
-int read_day5(char *path){
+Map * read_day5(char *path){
     FILE *fp = fopen(path, "r");
-    int coords[4];
+    int x1, x2, y1, y2;
     Map * map = malloc(sizeof(Map));
     init_map(map);
-    int overlaps = 0;
-    while(fscanf(fp, "%d,%d -> %d,%d", &coords[0], &coords[1], &coords[2], &coords[3]) > 0){
-
-        int x1, x2, y1, y2;
-        x1 = coords[0] <= coords[2] ? coords[0] : coords[2];
-        x2 = coords[0] <= coords[2] ? coords[2] : coords[0];
-        y1 = coords[1] <= coords[3] ? coords[1] : coords[3];
-        y2 = coords[1] <= coords[3] ? coords[3] : coords[1];
-        if(x1 == x2){
-            for(int i = y1; i <= y2; i++){
-                map->gas[i][x1]++;
-                overlaps += map->gas[i][x1] == 2 ? 1 : 0;
-            }
+    while(fscanf(fp, "%d,%d -> %d,%d", &x1, &y1, &x2, &y2) > 0){
+        int x_sign = x2 == x1 ? 0 : x2 > x1 ? 1 : -1;
+        int y_sign = y2 == y1 ? 0 : y2 > y1 ? 1 : -1;  
+        while(x1 != x2 || y1 != y2){
+            map->gas[y1][x1]++;
+            x1 += x_sign;
+            y1 += y_sign;
         }
-        if(y1 == y2){
-            for(int j = x1; j <= x2; j++){
-                map->gas[y1][j]++;
-                overlaps += map->gas[y1][j] == 2 ? 1 : 0;
-            }
-        }
-
+        map->gas[y1][x1]++;
     }
     fclose(fp);
-    return overlaps;
-    
+    return map;
 }

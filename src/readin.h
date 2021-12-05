@@ -10,6 +10,6 @@ SubState * read_day2(char *path, int N);
 int * read_day3(char *path, int N, int bits);
 int * read_day4_nums(char *path);
 Bingo * read_day4_boards(char *path);
-int read_day5(char *path);
+Map * read_day5(char *path);
 
 #endif
