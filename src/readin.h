@@ -11,5 +11,5 @@ int * read_day3(char *path, int N, int bits);
 int * read_day4_nums(char *path);
 Bingo * read_day4_boards(char *path);
 Map * read_day5(char *path);
-
+long * read_day6(char *path);
 #endif

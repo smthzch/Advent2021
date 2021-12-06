@@ -121,3 +121,18 @@ Map * read_day5(char *path){
     fclose(fp);
     return map;
 }
+
+long * read_day6(char *path){
+    long * ages = calloc(sizeof(long), 9);
+    char raw[1000];
+    FILE *fp = fopen(path, "r");
+    fscanf(fp, "%s", raw);
+    char * token = strtok(raw, ",");
+    long age;
+    while(token){
+        age = strtol(token, NULL, 10);
+        ages[age]++;
+        token = strtok(NULL, ",");
+    }
+    return ages;
+}

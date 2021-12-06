@@ -146,10 +146,41 @@ void day5(){
     char *path = "data/day5.txt";
     Map *map = read_day5(path);
     int overlaps = count_overlaps(map);
-    printf("overlaps %d", overlaps);
+    printf("overlaps %d\n", overlaps);
     newl();
 
     free(map);
+}
+
+// day 6-----------------------------------------------
+void simulate_lanternfish(long * ages, int days){
+    int range = 9;
+    int old_age = 7;
+    long temp0, temp1;
+    for(int i = 0; i < days; i++){
+        long to_make = ages[0];
+        temp1 = ages[range - 1];
+        for(int a = range - 1; a > 0; a--){
+            temp0 = ages[a - 1];
+            ages[a - 1] = temp1;
+            temp1 = temp0;
+        }
+        ages[old_age - 1] += temp1;
+        ages[range - 1] = to_make;
+    }
+}
+
+void day6(){
+    printd(6);
+    char *path = "data/day6.txt";
+    long * ages = read_day6(path);
+    simulate_lanternfish(ages, 256);
+    long total = 0;
+    for(int i = 0; i < 9; i++) total += ages[i];
+    printf("Total lanternfish: %ld\n", total);
+    newl();
+
+    free(ages);
 }
 
 //-----------------------------------------------
@@ -167,5 +198,6 @@ int main(){
     day3();
     day4();
     day5();
+    day6();
     return 0;
 }
