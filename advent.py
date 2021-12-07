@@ -11,5 +11,6 @@ welcome = '''######################################
 print(welcome)
 
 print('---Day 7---')
-print(f'Fuel :{tok.day7.solve1()}')
-print(f'Fuel :{tok.day7.solve2()}')
+path = 'data/day7.txt'
+print(f'Fuel :{tok.day7.solve1(path)}')
+print(f'Fuel :{tok.day7.solve2(path)}')
