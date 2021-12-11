@@ -32,3 +32,9 @@ path = 'data/day10.txt'
 day10 = tok.day10.solve(path)
 print(f'Illegal closing cost: {day10["part1"]}')
 print(f'Incomplete cost: {day10["part2"]}\n')
+
+print('---Day 11---')
+path = 'data/day11.txt'
+day11 = tok.day11.solve(path)
+print(f'Flashed: {day11["part1"]}')
+print(f'Step simultaneous: {day11["part2"]}\n')
