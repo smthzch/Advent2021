@@ -43,16 +43,18 @@ print(f'Flashed: {day11["part1"]}')
 print(f'Step simultaneous: {day11["part2"]}\n')
 
 print('---Day 12---')
-inpath = 'data/day12_ex.txt'
+inpath = 'data/day12.txt'
 outpath = 'solves/day12.pkl'
 rerun = True
-iters = int(1e5)
+iters_1 = int(1e7)
+iters_2 = int(1e8)
+seed = 666
 if not rerun and os.path.exists(outpath):
     with open(outpath, 'rb') as f:
         day12 = pickle.load(f)
 else:
-    day12 = tok.day12.solve(inpath, iters)
+    day12 = tok.day12.solve(inpath, iters_1, iters_2, seed)
     with open(outpath, 'wb') as f:
         pickle.dump(day12, f)
 print(f'Paths: {day12["part1"]}')
-print(f': {day12["part2"]}\n')
+print(f'Paths w/ revisit: {day12["part2"]}\n')
