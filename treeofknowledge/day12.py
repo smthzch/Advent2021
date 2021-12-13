@@ -132,10 +132,10 @@ def solve(path):
     trails_1 = recursive_search_1(i, nodes, mat.copy())
 
     # part 2
-    trails_2_1 = recursive_search_2(i, nodes, mat.copy(), True, [].copy())
-    trails_2 = iterative_search_2(i, nodes, mat)
+    trails_2 = recursive_search_2(i, nodes, mat.copy(), True, [].copy())
+    #trails_2_ = iterative_search_2(i, nodes, mat)
 
-    assert trails_2_1 == trails_2
+    #assert trails_2_ == trails_2
 
     return {
         'part1': trails_1,
