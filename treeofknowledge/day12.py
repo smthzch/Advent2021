@@ -43,27 +43,34 @@ def random_walk_1(nodes, mat, seed):
         trail +='-' + node
     return trail
 
-# part 2 stochastic search
+# part 2 recursive search
 def visit_lils(nodes, mat, lils):
     for lil in lils:
         i = nodes.index(lil)
         mat[:,i] = 0
 
+def recursive_search_1(i, nodes, to_visit):
+    node = nodes[i]
+    if node == 'end':
+        return 1
+    else:
+        n_paths = 0
+        if node.islower():
+            to_visit[:,i] = 0
+        # find which nodes can jump to
+        options = np.where(to_visit[i,:] == 1)[0].tolist()
+        if len(options) == 0:
+            return 0
+        for j in options:
+            n_paths += recursive_search_1(j, nodes, to_visit.copy())
+        return n_paths
 
-def random_walk_2(nodes, mat, seed):
-    np.random.seed(seed)
-    to_visit = mat.copy()
-    trail = 'start'
-    node = 'start'
-    # track when lowercase node revisited
-    lil_visits = []
-    revisits = True
-    # cannot revisit start
-    i = nodes.index(node)
-    to_visit[:,i] = 0
-    # build trail to end
-    while node != 'end':
-        i = nodes.index(node)
+def recursive_search(i, nodes, to_visit, revisits, lil_visits):
+    node = nodes[i]
+    if node == 'end':
+        return 1
+    else:
+        n_paths = 0
         if node.islower():
             # if havent visited lil node twice
             if revisits:
@@ -78,49 +85,26 @@ def random_walk_2(nodes, mat, seed):
             else:
                 to_visit[:,i] = 0
         # find which nodes can jump to
-        options = np.where(to_visit[i,:] == 1)[0]
+        options = np.where(to_visit[i,:] == 1)[0].tolist()
         if len(options) == 0:
-            return 'fail'
-        # randomly select node
-        i = np.random.choice(options)
-        node = nodes[i]
-        trail +='-' + node
-    return trail
+            return 0
+        for j in options:
+            n_paths += recursive_search(j, nodes, to_visit.copy(), revisits, lil_visits.copy())
+        return n_paths
 
-def solve(inpath, iters_1, iters_2, seed):
-    np.random.seed(seed)
-    nodes, mat = read_day12(inpath)
+def solve(path):
+    nodes, mat = read_day12(path)
+    # set start node and cannot revisit
+    i = nodes.index('start')
+    mat[:,i] = 0
 
-    # track trails visited as a set
-    trails_1 = set()
-    trails_2 = set()
+    # part 1
+    trails_1 = recursive_search_1(i, nodes, mat.copy())
 
-    with mp.Pool(processes = mp.cpu_count()) as pool:
-        # part 1
-        st = time.perf_counter()
-        args = (
-            [nodes, mat, np.random.randint(1, 1e9)] for i in range(iters_1)
-        )
-        results = pool.starmap(random_walk_1, args)
-        for trail in results:
-            if trail != 'fail':
-                trails_1.add(trail)
-        tim = time.perf_counter() - st
-        print(f'Part 1 runtime: {round(tim / 60, 1)} minutes')
-
-        # part 2
-        st = time.perf_counter()
-        args = (
-            [nodes, mat, np.random.randint(1, 1e9)] for i in range(iters_2)
-        )
-        results = pool.starmap(random_walk_2, args)
-        for trail in results:
-            if trail != 'fail':
-                trails_2.add(trail)
-        tim = time.perf_counter() - st
-        print(f'Part 2 runtime: {round(tim / 60, 1)} minutes')
+    # part 2
+    trails_2 = recursive_search(i, nodes, mat.copy(), True, [].copy())
 
     return {
-        'part1': len(trails_1),
-        'part2': len(trails_2)
+        'part1': trails_1,
+        'part2': trails_2
     }
