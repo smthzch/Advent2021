@@ -46,7 +46,6 @@ print(f'Paths: {sol["part1"]}')
 print(f'Paths w/ revisit: {sol["part2"]}\n')
 
 print('---Day 13---')
-path = 'data/day13_ex.txt'
-sol = tok.day13.solve(path)
-print(f'Paths: {sol["part1"]}')
-print(f'Paths w/ revisit: {sol["part2"]}\n')
+path = 'data/day13.txt'
+sol = tok.day13.solve(path, plot=False)
+print(f'First fold dots: {sol["part1"]}')
