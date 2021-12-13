@@ -62,7 +62,7 @@ def recursive_search_1(i, nodes, to_visit):
             n_paths += recursive_search_1(j, nodes, to_visit.copy())
         return n_paths
 
-def recursive_search(i, nodes, to_visit, revisits, lil_visits):
+def recursive_search_2(i, nodes, to_visit, revisits, lil_visits):
     node = nodes[i]
     if node == 'end':
         return 1
@@ -86,8 +86,41 @@ def recursive_search(i, nodes, to_visit, revisits, lil_visits):
         if len(options) == 0:
             return 0
         for j in options:
-            n_paths += recursive_search(j, nodes, to_visit.copy(), revisits, lil_visits.copy())
+            # down the hole we go
+            n_paths += recursive_search_2(j, nodes, to_visit.copy(), revisits, lil_visits.copy())
         return n_paths
+
+def iterative_search_2(i, nodes, mat):
+    revisits = True
+    lil_visits = []
+    n_paths = 0
+    stack = [[i, mat.copy(), revisits, lil_visits.copy()]]
+    while len(stack) > 0:
+        i, to_visit, revisits, lil_visits = stack.pop()
+        node = nodes[i]
+        if node == 'end':
+            n_paths += 1
+        else:
+            if node.islower():
+                # if havent visited lil node twice
+                if revisits:
+                    # cannot revisit lil nodes anymore
+                    if node in lil_visits:
+                        revisits = False
+                        visit_lils(nodes, to_visit, lil_visits) # mark all visited lil nodes as unvisitable
+                    # add to list of lil nodes visited
+                    else:
+                        lil_visits += [node]
+                # cannot revisit this node
+                else:
+                    to_visit[:,i] = 0
+            # find which nodes can jump to
+            options = np.where(to_visit[i,:] == 1)[0].tolist()
+            if len(options) == 0:
+                continue
+            for j in options:
+                stack += [[j, to_visit.copy(), revisits, lil_visits.copy()]]
+    return n_paths
 
 def solve(path):
     nodes, mat = read_day12(path)
@@ -99,7 +132,10 @@ def solve(path):
     trails_1 = recursive_search_1(i, nodes, mat.copy())
 
     # part 2
-    trails_2 = recursive_search(i, nodes, mat.copy(), True, [].copy())
+    trails_2_1 = recursive_search_2(i, nodes, mat.copy(), True, [].copy())
+    trails_2 = iterative_search_2(i, nodes, mat)
+
+    assert trails_2_1 == trails_2
 
     return {
         'part1': trails_1,
