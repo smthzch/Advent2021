@@ -1,6 +1,3 @@
-import pickle
-import os
-
 import treeofknowledge as tok
 
 welcome = '''######################################

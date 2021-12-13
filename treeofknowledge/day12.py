@@ -1,6 +1,4 @@
 import numpy as np
-import time
-import multiprocessing as mp
 
 def read_day12(path):
     nodes = set()
@@ -22,8 +20,7 @@ def read_day12(path):
     return nodes, mat
 
 # part 1 stochastic search
-def random_walk_1(nodes, mat, seed):
-    np.random.seed(seed)
+def random_walk_1(nodes, mat):
     to_visit = mat.copy()
     trail = 'start'
     node = 'start'
