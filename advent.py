@@ -49,3 +49,7 @@ print('---Day 13---')
 path = 'data/day13.txt'
 sol = tok.day13.solve(path, plot=False)
 print(f'First fold dots: {sol["part1"]}')
+
+print('---Day 14---')
+path = 'data/day14.txt'
+tok.day14.solve(path)
