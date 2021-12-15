@@ -62,4 +62,4 @@ def solve(path):
 
     print(f'Max element {max_e}: {max_c}')
     print(f'Min element {min_e}: {min_c}')
-    print(f'Max - min: {max_c - min_c}')
+    print(f'Max - min: {max_c - min_c}\n')

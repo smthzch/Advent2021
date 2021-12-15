@@ -48,8 +48,12 @@ print(f'Paths w/ revisit: {sol["part2"]}\n')
 print('---Day 13---')
 path = 'data/day13.txt'
 sol = tok.day13.solve(path, plot=False)
-print(f'First fold dots: {sol["part1"]}')
+print(f'First fold dots: {sol["part1"]}\n')
 
 print('---Day 14---')
 path = 'data/day14.txt'
 tok.day14.solve(path)
+
+print('---Day 15---')
+path = 'data/day15.txt'
+tok.day15.solve(path)
