@@ -57,3 +57,7 @@ tok.day14.solve(path)
 print('---Day 15---')
 path = 'data/day15.txt'
 tok.day15.solve(path)
+
+print('---Day 19---')
+path = 'data/day19_ex.txt'
+tok.day19.solve(path)
